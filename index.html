@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistemsiz</title>
+    <meta name="description" content="Sistemsiz'e giriş yapın. Hızlı ve kolay erişim için Giriş'e basın.">
+    <meta name="keywords" content="sistemsiz, giriş, erişim, sistem, site">
+    <link rel="icon" href="logo.png" type="image/png">
+    <style>
+        body {
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center; 
+        }
+
+        .logo {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px; 
+            z-index: 1;
+        }
+
+        .text {
+            font-size: 3em;
+            opacity: 0;
+            animation: fadeIn 50s forwards;
+            cursor: pointer;
+            z-index: 0;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes letters {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .letter {
+            display: inline-block;
+            animation: letters 0.5s forwards;
+        }
+
+        .note {
+            font-size: 1.2em;
+            color: #aaa;
+            margin-top: 10px;
+            opacity: 0;
+            animation: fadeIn 0s 0s forwards; /* 2 */
+        }
+
+        @media (max-width: 600px) {
+            .text {
+                font-size: 2.5em; 
+            }
+            .note {
+                font-size: 1em; 
+            }
+
+            .logo {
+                width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <img src="logo.png" alt="Sistemsiz" class="logo"> 
+    <div class="text" id="linkText"></div>
+    <div class="note" id="noteText">Sisteme giriş yapmak için, yukarıdan ↑ Giriş'e basın ve ardından Visit Site butonuna basın, ve içeridesiniz..</div>
+
+    <script>
+        const text = "Giriş";
+        const link = "https://6b84-104-28-212-150.ngrok-free.app"; 
+        const textContainer = document.getElementById('linkText');
+
+        text.split('').forEach((letter, index) => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.style.animationDelay = `${index * 0.2}s`;
+            span.textContent = letter;
+            textContainer.appendChild(span);
+        });
+
+        textContainer.onclick = () => {
+            window.location.href = link;
+        };
+    </script>
+</body>
+</html>

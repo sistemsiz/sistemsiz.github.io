@@ -89,15 +89,16 @@
             textContainer.appendChild(span);
         });
 
-        async function tryConnect(url) {
+        async function checkServer(url) {
             try {
                 const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                const timeoutId = setTimeout(() => controller.abort(), 3000);
                 
                 const response = await fetch(url, {
                     method: 'HEAD',
                     mode: 'no-cors',
-                    signal: controller.signal
+                    signal: controller.signal,
+                    cache: 'no-cache'
                 });
                 
                 clearTimeout(timeoutId);
@@ -108,18 +109,12 @@
         }
 
         textContainer.onclick = async () => {
-            const primarySuccess = await tryConnect(primaryLink);
+            const isPrimaryAvailable = await checkServer(primaryLink);
             
-            if (primarySuccess) {
+            if (isPrimaryAvailable) {
                 window.location.href = primaryLink;
             } else {
-                const secondarySuccess = await tryConnect(secondaryLink);
-                
-                if (secondarySuccess) {
-                    window.location.href = secondaryLink;
-                } else {
-                    window.location.href = primaryLink;
-                }
+                window.location.href = secondaryLink;
             }
         };
 

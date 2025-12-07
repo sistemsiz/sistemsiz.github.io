@@ -18,7 +18,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
             color: white;
-            text-align: center; 
+            text-align: center;
         }
 
         .logo {
@@ -26,7 +26,7 @@
             top: 100px;
             left: 50%;
             transform: translateX(-50%);
-            width: 200px; 
+            width: 200px;
             z-index: 1;
         }
 
@@ -48,15 +48,15 @@
             color: #aaa;
             margin-top: 10px;
             opacity: 0;
-            animation: fadeIn 0s 0s forwards; 
+            animation: fadeIn 0s 0s forwards;
         }
 
         @media (max-width: 600px) {
             .text {
-                font-size: 2.5em; 
+                font-size: 2.5em;
             }
             .note {
-                font-size: 1em; 
+                font-size: 1em;
             }
             .logo {
                 width: 150px;
@@ -65,7 +65,7 @@
     </style>
 </head>
 <body>
-    <img src="logo.png" alt="Sistemsiz" class="logo"> 
+    <img src="logo.png" alt="Sistemsiz" class="logo">
     <div class="text" id="linkText"></div>
     <div class="note" id="noteText">Sisteme giriş yapmak için, yukarıdan ↑ Giriş'e basın ve ardından Visit Site butonuna basın, ve içeridesiniz..</div>
     <a style="display:block;font-size:16px;font-weight:500;text-align:center;border-radius:8px;padding:5px;background:transparent;text-decoration:none;color:#fff;" href="https://t.me/systemsiz" target="_blank">
@@ -77,8 +77,8 @@
     </a>
     <script>
         const text = "Giriş";
-        const link = "http://192.168.1.12"; 
-        const fallbackLink = 'http://192.168.1.12';
+        const primaryLink = "http://192.168.1.12";
+        const secondaryLink = "http://192.168.1.100";
         const textContainer = document.getElementById('linkText');
 
         text.split('').forEach((letter, index) => {
@@ -89,19 +89,36 @@
             textContainer.appendChild(span);
         });
 
-        textContainer.onclick = async () => { 
+        async function tryConnect(url) {
             try {
-                const response = await fetch(link);
-                if (!response.ok) {
-                    throw new Error('Response not OK');
-                }
-                window.location.href = link;
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000);
+                
+                const response = await fetch(url, {
+                    method: 'HEAD',
+                    mode: 'no-cors',
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeoutId);
+                return true;
             } catch (error) {
-                const errorMessage = error.message;
-                if (errorMessage.includes('ERR_NGROK_3200') || errorMessage.includes('ERR_NGROK_3004')) {
-                    window.location.href = fallbackLink;
+                return false;
+            }
+        }
+
+        textContainer.onclick = async () => {
+            const primarySuccess = await tryConnect(primaryLink);
+            
+            if (primarySuccess) {
+                window.location.href = primaryLink;
+            } else {
+                const secondarySuccess = await tryConnect(secondaryLink);
+                
+                if (secondarySuccess) {
+                    window.location.href = secondaryLink;
                 } else {
-                    window.location.href = fallbackLink;
+                    window.location.href = primaryLink;
                 }
             }
         };
